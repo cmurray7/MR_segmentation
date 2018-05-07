@@ -1,10 +1,10 @@
-import numpy as np
-import nibabel as nib
+import sys
 import os
+import numpy as np
+
+sys.path.insert(0, "~/Documents/spring2018/543/project/code/")
 from imageio import imwrite
-import pandas as pd
-import matplotlib.pyplot as plt
-from .util import *
+from util import *
 
 def convert_to_2d(sub_IDs, outdir='tiff', un=True, man=True, fs=True):
 	output_dir = outdir

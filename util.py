@@ -2,16 +2,18 @@ import numpy as np
 import nibabel as nib
 import os
 import pandas as pd
+import torch
 
-NUM_CLASSES = 69
+NUM_CLASSES = 67
 BATCH_SIZE = 10
 
 def to_one_hot(label_slice):
-	return (np.arange(NUM_CLASSES) == label_slice[...,None]).astype(np.int64)
+	ret = np.rollaxis(np.arange(NUM_CLASSES) == label_slice[...,None], 2, 0)
+	return ret.astype(np.int64)
 
 def from_one_hot(label_volume):
-	print(label_volume.shape)
-	return(np.argmax(label_volume, axis=-1))
+	values, indices = label_volume.max(1)
+	return(indices)
 
 def subject_volumes(subject_ID, data_path):
 
@@ -44,6 +46,8 @@ def slice_to_rgb(slice, number_to_index_dict, color_map):
 	for i in range(slice.shape[0]):
 		for j in range(slice.shape[1]):
 			if slice[i, j] == 0:
+				continue
+			elif slice[i, j] not in number_to_index_dict:
 				continue
 			row = number_to_index_dict[slice[i, j]]
 			image[i, j, :] = color_map[row , :]

@@ -3,6 +3,10 @@ import torch
 import numpy as np
 from random import randint
 
+import sys
+sys.path.insert(0, "~/Documents/spring2018/543/project/code/")
+from util import *
+
 class OasisDataset(torch.utils.data.Dataset):
 	def __init__(self, type, num_channels=5):
 		super(OasisDataset, self).__init__()
@@ -42,10 +46,10 @@ class OasisDataset(torch.utils.data.Dataset):
 			self.data_cache_[subject] = data
 			self.label_cache_[subject] = label
 
-		if self.type == 'train' or self.type == 'val':
+		if self.type == 'train':
 
 			buff = (self.num_channels - 1) // 2
-			middle_slice = randint(0+buff, 256-buff)
+			middle_slice = randint(0+buff, 255-buff)
 			data = data[middle_slice-buff:middle_slice+buff+1, :, :]
 			label = label[middle_slice, :, :]
 

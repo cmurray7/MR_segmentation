@@ -32,24 +32,21 @@ class MSDNet(nn.Module):
 			in_channels = 5
 
 		if out_channels is None:
-			out_channels = 69
+			out_channels = 67
 
 		super(MSDNet, self).__init__()
 
 		self.layer_list = add_conv_block(in_ch=in_channels)
 
 		current_in_channels = 1
-		# Add N layers
 		for i in range(num_layers):
 			s = (i) % 10 + 1
 			self.layer_list += add_conv_block(in_ch=current_in_channels, dilate=s)
 			current_in_channels += 1
 
-		# Add final output block
 		self.layer_list += add_conv_block(in_ch=current_in_channels + in_channels, out_ch=out_channels, filter_size=1,
 		                                  last=True)
 
-		# Add to Module List
 		self.layers = nn.ModuleList(self.layer_list)
 
 		self.apply(self.weight_init)
@@ -67,9 +64,8 @@ class MSDNet(nn.Module):
 
 			if (i + 1) % 2 == 0 and (not i == (len(self.layers) - 1)):
 				x = F.relu(x)
-				# Append output into previous features
 				prev_features.append(x)
 				x = torch.cat(prev_features, 1)
 
-		x = F.log_softmax(x)
+		x = F.log_softmax(x, dim=1)
 		return x
